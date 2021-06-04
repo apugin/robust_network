@@ -1,7 +1,7 @@
 from keras.datasets import mnist
 import numpy as np
 from keras.utils import np_utils
-from params import IMG_ROWS, IMG_COLS
+from params import IMG_ROWS, IMG_COLS, NB_CLASSES
 
 
 def get_data(nb_training_samples):
@@ -19,7 +19,7 @@ def get_data(nb_training_samples):
     l_idx = l_idx[:nb_training_samples]
     x_train, y_train = x_train[l_idx], y_train[l_idx]
 
-    y_train = np_utils.to_categorical(y_train, nb_classes)
-    y_test = np_utils.to_categorical(y_test, nb_classes)
+    y_train = np_utils.to_categorical(y_train, NB_CLASSES)
+    y_test = np_utils.to_categorical(y_test, NB_CLASSES)
 
     return (x_train, y_train), (x_test, y_test)
