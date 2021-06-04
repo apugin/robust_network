@@ -11,7 +11,7 @@ parser.add_argument('--phase', dest='phase', default='test', help="Choose betwee
 parser.add_argument('--model', dest='model', default='fusion', help="Choose the kind of model: 'autoencoder', 'classifier', 'fusion'")
 parser.add_argument('--epoch', dest='epoch', type=int, default=20, help="Choose the number of epoch")
 parser.add_argument('--batch_size', dest='batch_size', type=int, default=128, help="Choose the batch size")
-parser.add_argument('--nb_samples', dest='np_samples', type=int, default=5000, help="Choose the size of the training dataset")
+parser.add_argument('--nb_samples', dest='nb_samples', type=int, default=5000, help="Choose the size of the training dataset")
 
 #parser.add_argument('--name', dest='name', default='', help="Choose the name of the model")
 
