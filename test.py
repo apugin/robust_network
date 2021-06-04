@@ -1,4 +1,7 @@
-from params import OPTIMIZER, INPUT_SHAPE
+import keras
+from keras.layers import Input
+from params import OPTIMIZER, INPUT_SHAPE, BETA
+
 
 def testing(x_test,y_test,model):
     if model == 'autoencoder':
