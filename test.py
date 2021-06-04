@@ -1,7 +1,7 @@
 from params import OPTIMIZER, INPUT_SHAPE
 
 def testing(x_test,y_test,model):
-    if model = 'autoencoder':
+    if model == 'autoencoder':
         encoder = keras.models.load_model("saved_models/encoder.h5")
         decoder = keras.models.load_model("saved_models/decoder.h5")
 
@@ -13,7 +13,7 @@ def testing(x_test,y_test,model):
         print("Accuracy de l'autoencodeur:"+str(score[1]))
 
 
-    elif model = 'classifier':
+    elif model == 'classifier':
         classifier_beginning = keras.models.load_model("saved_models/classifier_beginning.h5")
         classifier_end = keras.models.load_model("saved_models/classifier_end.h5")
 
@@ -21,11 +21,11 @@ def testing(x_test,y_test,model):
         classifier = Model(input_classifier, classifier_end(classifier_beginning(input_classifier)), name='classifier')
         classifier.compile(loss='categorical_crossentropy', optimizer=OPTIMIZER, metrics=['accuracy'])
 
-        score = classifier.evaluate(x_test, y_test, verbose=0)
+        score == classifier.evaluate(x_test, y_test, verbose=0)
         print("Accuracy du classifieur:"+str(score[1]))
 
 
-    elif model = 'fusion':
+    elif model == 'fusion':
         encoder = keras.models.load_model("saved_models/encoder.h5")
         decoder = keras.models.load_model("saved_models/decoder.h5")
         classifier_end = keras.models.load_model("saved_models/classifier_end.h5")

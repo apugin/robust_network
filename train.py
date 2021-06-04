@@ -3,7 +3,7 @@ from keras.layers import Input
 from params import INPUT_SHAPE, OPTIMIZER, BETA
 
 def training(x_train, y_train ,model, nb_epoch, training_batch_size):
-    if model = 'autoencoder':
+    if model == 'autoencoder':
         encoder = keras.models.load_model("saved_models/encoder.h5")
         decoder = keras.models.load_model("saved_models/decoder.h5")
 
@@ -16,7 +16,7 @@ def training(x_train, y_train ,model, nb_epoch, training_batch_size):
         encoder.save("saved_models/encoder.h5")
         decoder.save("saved_models/decoder.h5")
 
-    elif model = 'classifier':
+    elif model == 'classifier':
         classifier_beginning = keras.models.load_model("saved_models/classifier_beginning.h5")
         classifier_end = keras.models.load_model("saved_models/classifier_end.h5")
 
@@ -29,7 +29,7 @@ def training(x_train, y_train ,model, nb_epoch, training_batch_size):
         classifier_beginning.save("saved_models/classifier_beginning.h5")
         classifier_end.save("saved_models/classifier_end.h5")
 
-    elif model = 'fusion':
+    elif model == 'fusion':
         encoder = keras.models.load_model("saved_models/encoder.h5")
         decoder = keras.models.load_model("saved_models/decoder.h5")
         classifier_end = keras.models.load_model("saved_models/classifier_end.h5")
