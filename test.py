@@ -48,8 +48,8 @@ def testing(x_test,y_test,model):
                   'decoder': 'accuracy', 
                   'classifier_end': 'accuracy'})
         
-        score = fusion.evaluate(x=x_train,
-	            y={"decoder": x_train, "classifier_end": y_train},
+        score = fusion.evaluate(x=x_test,
+	            y={"decoder": x_test, "classifier_end": y_test},
 	            verbose=0)
         print("Accuracy du décodeur dans fusion:"+str(score[3]))
         print("Accuracy du classifieur dans fusion:"+str(score[4]))
