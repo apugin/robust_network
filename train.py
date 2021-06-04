@@ -1,5 +1,6 @@
 import keras
 from keras.layers import Input
+from keras.models import Model
 from params import INPUT_SHAPE, OPTIMIZER, BETA
 
 def training(x_train, y_train ,model, nb_epoch, training_batch_size):
