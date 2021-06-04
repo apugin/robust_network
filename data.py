@@ -1,4 +1,5 @@
 from keras.datasets import mnist
+import numpy as np
 from params import IMG_ROWS, IMG_COLS
 
 
