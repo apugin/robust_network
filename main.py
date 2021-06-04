@@ -1,5 +1,6 @@
 import argparse
 import os
+from data import get_data
 from test import testing
 from train import training
 
