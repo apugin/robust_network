@@ -3,7 +3,7 @@ import keras
 from keras.models import Sequential, Model
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from keras.layers import Input, LeakyReLU, Conv2DTranspose, Reshape
-from params import INPUT_SHAPE, DIM_LATENT, ALPHA, NB_CLASSES
+from params import INPUT_SHAPE, DIM_LATENT, ALPHA, NB_CLASSES, OPTIMIZER, BETA
 
 
 def load_model(file_path,model):
@@ -67,6 +67,8 @@ def assemble_autoencoder(encoder, decoder):
 
     autoencoder = Model(input, decoder(encoder(input)), name='autoencoder')
 
+    autoencoder.compile(loss="mse", optimizer=OPTIMIZER, metrics=['accuracy'])
+
     return autoencoder
 
 
@@ -87,6 +89,8 @@ def assemble_classifier(classifier_beginning, classifier_end):
 
     classifier = Model(input, classifier_end(classifier_beginning(input)), name='classifier')
 
+    classifier.compile(loss='categorical_crossentropy', optimizer=OPTIMIZER, metrics=['accuracy'])
+
     return classifier
 
 
@@ -95,6 +99,7 @@ def assemble_fusion(encoder, decoder, classifier_end):
     input_fusion = Input(shape=INPUT_SHAPE)
 
     fusion = Model(input_fusion, [ decoder(encoder(input_fusion)), classifier_end(encoder(input_fusion)) ], name='fusion')
+    
     fusion.compile(optimizer=OPTIMIZER, 
               loss={
                   'decoder': 'mse', 
