@@ -9,8 +9,8 @@ def training(x_train, y_train ,model, nb_epoch, training_batch_size,file):
         encoder_path = "saved_models/encoder" + file + ".h5"
         decoder_path = "saved_models/decoder" + file + ".h5"
 
-        encoder = keras.models.load_model(encoder_path, "encoder")
-        decoder = keras.models.load_model(decoder_path, "decoder")
+        encoder = load_model(encoder_path, "encoder")
+        decoder = load_model(decoder_path, "decoder")
 
         autoencoder = assemble_autoencoder(encoder, decoder)
 
@@ -23,8 +23,8 @@ def training(x_train, y_train ,model, nb_epoch, training_batch_size,file):
         classifier_beginning_path = "saved_models/classifier_beginning" + file + ".h5"
         classifier_end_path = "saved_models/classifier_end" + file + ".h5"
 
-        classifier_beginning = keras.models.load_model(classifier_beginning_path, "encoder")
-        classifier_end = keras.models.load_model(classifier_end_path, "classifier_end")
+        classifier_beginning = load_model(classifier_beginning_path, "encoder")
+        classifier_end = load_model(classifier_end_path, "classifier_end")
 
         classifier = assemble_classifier(classifier_beginning, classifier_end)
 
@@ -38,9 +38,9 @@ def training(x_train, y_train ,model, nb_epoch, training_batch_size,file):
         decoder_path = "saved_models/decoder" + file + ".h5"
         classifier_end_path = "saved_models/classifier_end" + file + ".h5"
 
-        encoder = keras.models.load_model(encoder_path, "encoder")
-        decoder = keras.models.load_model(decoder_path, "decoder")
-        classifier_end = keras.models.load_model(classifier_end_path, "classifier_end")
+        encoder = load_model(encoder_path, "encoder")
+        decoder = load_model(decoder_path, "decoder")
+        classifier_end = load_model(classifier_end_path, "classifier_end")
 
         fusion = assemble_fusion(encoder, decoder, classifier_end)
         
