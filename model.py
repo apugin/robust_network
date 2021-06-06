@@ -1,8 +1,24 @@
+import os
 import keras
 from keras.models import Sequential, Model
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from keras.layers import Input, LeakyReLU, Conv2DTranspose, Reshape
 from params import INPUT_SHAPE, DIM_LATENT, ALPHA, NB_CLASSES
+
+
+def load_model(file_path,model):
+    if not os.path.exists(file_path):
+        if model == 'encoder':
+            return create_encoder()
+        elif model == 'decoder':
+            return create_decoder()
+        elif model == 'classifier_end':
+            return create_classifier_end()
+        else :
+            print("/!\ Unknown model /!\")
+            exit(0)
+    else :
+        return keras.models.load_model(file_path)
 
 
 def create_encoder():
@@ -23,9 +39,9 @@ def create_encoder():
     return encoder
 
 
-def create_decoder(encoder):
+def create_decoder():
     '''Create the model for the decoder'''
-    volume_size = encoder.layers[-2].input_shape
+    volume_size = (None, 7, 7, 64)
 
     decoder1 = Input(shape=(DIM_LATENT,))
 
@@ -54,17 +70,15 @@ def assemble_autoencoder(encoder, decoder):
     return autoencoder
 
 
-def create_classifier_two_parts():
+def create_classifier_end():
     '''Create classifier in two parts; the first part has the same architecture as the encoder'''
-    classifier_beginning = create_encoder()
-
     continuation_classifier = Input(shape=(DIM_LATENT,))
 
     end_classif2 = Dense(NB_CLASSES, activation='sigmoid', name='classifier_output') (continuation_classifier)
 
     classifier_end = Model(continuation_classifier, end_classif2, name='classifier_end')
 
-    return classifier_beginning, classifier_end
+    return classifier_end
 
 
 def assemble_classifier(classifier_beginning, classifier_end):
@@ -74,3 +88,23 @@ def assemble_classifier(classifier_beginning, classifier_end):
     classifier = Model(input, classifier_end(classifier_beginning(input)), name='classifier')
 
     return classifier
+
+
+def assemble_fusion(encoder, decoder, classifier_end):
+
+    input_fusion = Input(shape=INPUT_SHAPE)
+
+    fusion = Model(input_fusion, [ decoder(encoder(input_fusion)), classifier_end(encoder(input_fusion)) ], name='fusion')
+    fusion.compile(optimizer=OPTIMIZER, 
+              loss={
+                  'decoder': 'mse', 
+                  'classifier_end': 'categorical_crossentropy'},
+              loss_weights={
+                  'decoder': BETA, 
+                  'classifier_end': 1.},
+              metrics={
+                  'decoder': 'accuracy', 
+                  'classifier_end': 'accuracy'})
+        
+    return fusion
+

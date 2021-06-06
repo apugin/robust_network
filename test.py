@@ -1,52 +1,47 @@
 import keras
 from keras.layers import Input
 from keras.models import Model
+from model import *
 from params import OPTIMIZER, INPUT_SHAPE, BETA
 
 
-def testing(x_test,y_test,model):
+def testing(x_test,y_test,model,file):
     if model == 'autoencoder':
-        encoder = keras.models.load_model("saved_models/encoder.h5")
-        decoder = keras.models.load_model("saved_models/decoder.h5")
+        encoder_path = "saved_models/encoder" + file + ".h5"
+        decoder_path = "saved_models/decoder" + file + ".h5"
 
-        input = Input(shape=INPUT_SHAPE)
-        autoencoder = Model(input, decoder(encoder(input)), name='autoencoder')
-        autoencoder.compile(loss="mse", optimizer=OPTIMIZER, metrics=['accuracy'])
+        encoder = load_model(encoder_path, "encoder")
+        decoder = load_model(decoder_path, "decoder")
+
+        autoencoder = assemble_autoencoder(encoder, decoder)
 
         score = autoencoder.evaluate(x_test, x_test, verbose=0)
         print("Accuracy de l'autoencodeur:"+str(score[1]))
 
 
     elif model == 'classifier':
-        classifier_beginning = keras.models.load_model("saved_models/classifier_beginning.h5")
-        classifier_end = keras.models.load_model("saved_models/classifier_end.h5")
+        classifier_beginning_path = "saved_models/classifier_beginning" + file + ".h5"
+        classifier_end_path = "saved_models/classifier_end" + file + ".h5"
 
-        input_classifier = Input(shape=INPUT_SHAPE)
-        classifier = Model(input_classifier, classifier_end(classifier_beginning(input_classifier)), name='classifier')
-        classifier.compile(loss='categorical_crossentropy', optimizer=OPTIMIZER, metrics=['accuracy'])
+        classifier_beginning = load_model(classifier_beginning_path, "encoder")
+        classifier_end = load_model(classifier_end_path, "classifier_end")
 
-        score == classifier.evaluate(x_test, y_test, verbose=0)
+        classifier = assemble_classifier(classifier_beginning, classifier_end)
+
+        score = classifier.evaluate(x_test, y_test, verbose=0)
         print("Accuracy du classifieur:"+str(score[1]))
 
 
     elif model == 'fusion':
-        encoder = keras.models.load_model("saved_models/encoder.h5")
-        decoder = keras.models.load_model("saved_models/decoder.h5")
-        classifier_end = keras.models.load_model("saved_models/classifier_end.h5")
+        encoder_path = "saved_models/encoder" + file + ".h5"
+        decoder_path = "saved_models/decoder" + file + ".h5"
+        classifier_end_path = "saved_models/classifier_end" + file + ".h5"
 
-        input_fusion = Input(shape=INPUT_SHAPE)
+        encoder = load_model(encoder_path, "encoder")
+        decoder = load_model(decoder_path, "decoder")
+        classifier_end = load_model(classifier_end_path, "classifier_end")
 
-        fusion = Model(input_fusion, [ decoder(encoder(input_fusion)), classifier_end(encoder(input_fusion)) ], name='fusion')
-        fusion.compile(optimizer=OPTIMIZER, 
-              loss={
-                  'decoder': 'mse', 
-                  'classifier_end': 'categorical_crossentropy'},
-              loss_weights={
-                  'decoder': BETA, 
-                  'classifier_end': 1.},
-              metrics={
-                  'decoder': 'accuracy', 
-                  'classifier_end': 'accuracy'})
+        fusion = assemble_fusion(encoder, decoder, classifier_end)
         
         score = fusion.evaluate(x=x_test,
 	            y={"decoder": x_test, "classifier_end": y_test},
