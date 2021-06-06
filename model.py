@@ -15,7 +15,7 @@ def load_model(file_path,model):
         elif model == 'classifier_end':
             return create_classifier_end()
         else :
-            print("/!\ Unknown model /!\")
+            print("/!\ Unknown model /!\ ")
             exit(0)
     else :
         return keras.models.load_model(file_path)
