@@ -15,5 +15,5 @@ BETA = 1 # Parameter for loss function: Crossentropy(labels) + BETA*MSE(images)
 
 # Model parameters
 ALPHA = 0.2 # Parameter for LeakyReLu
-DIM_LATENT = 16 # Dimension of the latent space
+DIM_LATENT = 10 # Dimension of the latent space
 
