@@ -77,7 +77,7 @@ def create_classifier_end():
     '''Create classifier in two parts; the first part has the same architecture as the encoder'''
     continuation_classifier = Input(shape=(DIM_LATENT,))
 
-    end_classif2 = Dense(NB_CLASSES, activation='sigmoid', name='classifier_output') (continuation_classifier)
+    end_classif2 = Dense(NB_CLASSES, activation='softmax', name='classifier_output') (continuation_classifier)
 
     classifier_end = Model(continuation_classifier, end_classif2, name='classifier_end')
 
