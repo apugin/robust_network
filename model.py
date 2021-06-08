@@ -68,7 +68,7 @@ def assemble_autoencoder(encoder, decoder):
 
     autoencoder = Model(input, decoder(encoder(input)), name='autoencoder')
 
-    autoencoder.compile(loss="mse", optimizer=OPTIMIZER, metrics=['accuracy'])
+    autoencoder.compile(loss="mse", optimizer=OPTIMIZER)
 
     return autoencoder
 
@@ -108,8 +108,7 @@ def assemble_fusion(encoder, decoder, classifier_end):
               loss_weights={
                   'decoder': BETA, 
                   'classifier_end': 1.},
-              metrics={
-                  'decoder': 'accuracy', 
+              metrics={ 
                   'classifier_end': 'accuracy'})
         
     return fusion
