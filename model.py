@@ -26,10 +26,10 @@ def create_encoder():
     '''Create the model for the encoder'''
     input = Input(shape=INPUT_SHAPE)
 
-    encoder2 = Conv2D(32, kernel_size=(3,3), strides=(2,2), padding='same') (input)
+    encoder2 = Conv2D(64, kernel_size=(3,3), strides=(2,2), padding='same') (input)
     encoder3 = LeakyReLU(alpha=ALPHA) (encoder2)
 
-    encoder4 = Conv2D(64, kernel_size=(3,3), strides=(2,2), padding='same') (encoder3)
+    encoder4 = Conv2D(32, kernel_size=(3,3), strides=(2,2), padding='same') (encoder3)
     encoder5 = LeakyReLU(alpha=ALPHA) (encoder4)
 
     encoder6 = Flatten() (encoder5)
