@@ -1,8 +1,8 @@
-import numpy as np
 from tensorflow import keras
-from keras.models import Sequential, Model
-from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
-from keras.layers import Input, LeakyReLU, Conv2DTranspose, Reshape, ReLU
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Input, LeakyReLU, Conv2DTranspose, Reshape, ReLU
+from kerastuner import HyperModel
 from params import INPUT_SHAPE, NB_CLASSES, BETA
 
 
