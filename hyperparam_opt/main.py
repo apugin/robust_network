@@ -58,5 +58,17 @@ def main():
         validation_split=0.1
     )
 
+    # Show a summary of the search
+    tuner.results_summary()
+
+    # Retrieve the best model.
+    best_model = tuner.get_best_models(num_models=1)[0]
+
+    # Evaluate the best model.
+    loss = best_model.evaluate(x_test, x_test)
+
+    print()
+    print("Le meilleur modèle atteint sur la base de test une loss de :" + str(loss))
+
 if __name__ == '__main__':
     main()
