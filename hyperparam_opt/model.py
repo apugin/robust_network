@@ -3,7 +3,7 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from tensorflow.keras.layers import Input, LeakyReLU, Conv2DTranspose, Reshape, ReLU
 from kerastuner import HyperModel
-from params import INPUT_SHAPE, NB_CLASSES, BETA
+from params import NB_CLASSES, BETA
 
 
 class AEHyperModel(HyperModel):
@@ -47,7 +47,7 @@ class AEHyperModel(HyperModel):
         default=3
     )
 
-    autoencoder.add(Conv2D(nb_filters1, kernel_size=filter_size, strides=(2,2), padding='same', input_shape=input_shape))
+    autoencoder.add(Conv2D(nb_filters1, kernel_size=filter_size, strides=(2,2), padding='same', input_shape=self.input_shape))
     autoencoder.add(activation)
 
     nb_filters2 = hp.Int(
@@ -85,7 +85,7 @@ class AEHyperModel(HyperModel):
     autoencoder.add(Conv2DTranspose(nb_filters1, kernel_size=filter_size, strides=(2,2), padding='same'))
     autoencoder.add(activation)
 
-    autoencoder.add(Conv2DTranspose(input_shape[2], kernel_size=filter_size, padding='same', activation='sigmoid'))
+    autoencoder.add(Conv2DTranspose(self.input_shape[2], kernel_size=filter_size, padding='same', activation='sigmoid'))
 
     autoencoder.compile(
             optimizer=keras.optimizers.Adam(
