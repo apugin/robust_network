@@ -1,3 +1,4 @@
+import numpy as np
 from tensorflow import keras
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
