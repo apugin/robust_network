@@ -30,9 +30,9 @@ def main():
 
 
     if args.name=='':
-        filename = args.model + '_seed_' + str(args.seed) + '_samples_' + str(args.nb_samples)
+        filename = args.model
     else :
-        filename = args.model + '_seed_' + str(args.seed) + '_samples_' + str(args.nb_samples) + '_' + args.name
+        filename = args.model  + '_' + args.name
 
     if args.model=='autoencoder':
         hypermodel = AEHyperModel(input_shape=INPUT_SHAPE)
