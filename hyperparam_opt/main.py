@@ -28,10 +28,11 @@ def main():
 
     (x_train, y_train), (x_test, y_test) = get_data(nb_training_samples=args.nb_samples)
 
+
     if args.name=='':
-        filename = args.model
+        filename = args.model + '_seed_' + str(args.seed) + '_samples_' + str(args.nb_samples)
     else :
-        filename = args.model + '_' + args.name
+        filename = args.model + '_seed_' + str(args.seed) + '_samples_' + str(args.nb_samples) + '_' + args.name
 
     if args.model=='autoencoder':
         hypermodel = AEHyperModel(input_shape=INPUT_SHAPE)
