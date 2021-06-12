@@ -3,7 +3,6 @@ from data import get_data
 import tensorflow as tf
 from kerastuner.tuners import RandomSearch
 from model import AEHyperModel
-from params import INPUT_SHAPE
 
 import warnings
 warnings.simplefilter("ignore")
@@ -36,7 +35,7 @@ def main():
         filename = args.model + '_' + str(args.search_type) + '_samples_' + str(args.nb_samples) + '_seed_' + str(args.seed) + '_' + args.name
 
     if args.model=='autoencoder':
-        hypermodel = AEHyperModel(input_shape=INPUT_SHAPE)
+        hypermodel = AEHyperModel()
     
 
     if args.search_type=='random':
