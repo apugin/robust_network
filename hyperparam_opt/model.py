@@ -1,4 +1,6 @@
 import numpy as np
+from sklearn.model_selection import GridSearchCV
+from keras.wrappers.scikit_learn import KerasClassifier, KerasRegressor
 from tensorflow import keras
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
@@ -22,23 +24,24 @@ class AEHyperModel(HyperModel):
         default=64
     )
 
-    alpha = hp.Float(
-                    'alpha',
-                    min_value=1e-3,
-                    max_value=1,
-                    sampling='LOG',
-                    default=1e-1
-                )
+    #alpha = hp.Float(
+    #                'alpha',
+    #                min_value=1e-3,
+    #                max_value=1,
+    #                sampling='LOG',
+    #                default=1e-1
+    #            )
 
-    activation_choice = hp.Choice(
-        'activation_choice',
-        values=['relu','leakyrelu']
-    )
+    #activation_choice = hp.Choice(
+    #    'activation_choice',
+    #    values=['relu','leakyrelu']
+    #)
 
-    if activation_choice == 'relu':
-      activation = ReLU(max_value=None, negative_slope=0, threshold=0)
-    elif activation_choice == 'leakyrelu':
-      activation = LeakyReLU(alpha=alpha)
+    #if activation_choice == 'relu':
+    activation = ReLU(max_value=None, negative_slope=0, threshold=0)
+
+    #elif activation_choice == 'leakyrelu':
+    #  activation = LeakyReLU(alpha=alpha)
 
     filter_size = hp.Int(
         'filter_size',
@@ -64,9 +67,9 @@ class AEHyperModel(HyperModel):
 
     dim_latent = hp.Int(
         'dim_latent',
-        min_value=8,
+        min_value=10,
         max_value=16,
-        step=2,
+        step=3,
         default=10
     )
 
@@ -88,18 +91,65 @@ class AEHyperModel(HyperModel):
 
     autoencoder.add(Conv2DTranspose(self.input_shape[2], kernel_size=filter_size, padding='same', activation='sigmoid'))
 
+    #learning_rate = hp.Float(
+    #                'learning_rate',
+    #                min_value=1e-4,
+    #                max_value=1e-2,
+    #                sampling='LOG',
+    #                default=1e-3
+    #                )
+
+    learning_rate = 1e-3
+
     autoencoder.compile(
             optimizer=keras.optimizers.Adam(
-                hp.Float(
-                    'learning_rate',
-                    min_value=1e-4,
-                    max_value=1e-2,
-                    sampling='LOG',
-                    default=1e-3
-                )    
+                learning_rate    
             ),
             loss='mse'
         )
     
     return autoencoder
 
+def create_autoencoder(nb_filters1, nb_filters2, filter_size, dim_latent):
+  autoencoder = keras.Sequential()
+
+  activation = ReLU(max_value=None, negative_slope=0, threshold=0)
+
+  autoencoder.add(Conv2D(nb_filters1, kernel_size=filter_size, strides=(2,2), padding='same', input_shape=input_shape))
+  autoencoder.add(activation)
+
+  autoencoder.add(Conv2D(nb_filters2, kernel_size=filter_size, strides=(2,2), padding='same'))
+  autoencoder.add(activation)
+
+  autoencoder.add(Flatten())
+  autoencoder.add(Dense(dim_latent))
+
+  volume_size = (None, 7, 7, nb_filters2)
+
+  autoencoder.add(Dense(np.prod(volume_size[1:])))
+  autoencoder.add(Reshape((volume_size[1], volume_size[2], volume_size[3])))
+
+  autoencoder.add(Conv2DTranspose(nb_filters2, kernel_size=filter_size, strides=(2,2), padding='same'))
+  autoencoder.add(activation)
+
+  autoencoder.add(Conv2DTranspose(nb_filters1, kernel_size=filter_size, strides=(2,2), padding='same'))
+  autoencoder.add(activation)
+
+  autoencoder.add(Conv2DTranspose(input_shape[2], kernel_size=filter_size, padding='same', activation='sigmoid'))
+
+  learning_rate = 1e-3
+
+  autoencoder.compile(
+          optimizer=keras.optimizers.Adam(
+              learning_rate    
+          ),
+          loss='mse'
+      )
+    
+  return autoencoder
+
+def sk_autoencoder():
+    
+    autoencoder = KerasRegressor(build_fn=create_autoencoder, verbose=0)
+
+    return autoencoder
