@@ -17,6 +17,7 @@ parser.add_argument('--batch_size', dest='batch_size', type=int, default=128, he
 parser.add_argument('--nb_samples', dest='nb_samples', type=int, default=5000, help="Choose the size of the training dataset")
 parser.add_argument('--name', dest='name', default='', help="Choose the name of your search")
 
+parser.add_argument('--search_type', dest='search_type', default='random', help="Choose search type : 'random or 'grid'")
 parser.add_argument('--max_trials', dest='max_trials', type=int, default=50, help="Choose the number of random trials")
 parser.add_argument('--exec_per_trial', dest='exec_per_trial', type=int, default=1, help="Choose the number of executions per trial")
 parser.add_argument('--seed', dest='seed', type=int, default=1, help="Choose the seed for random events")
@@ -30,22 +31,24 @@ def main():
 
 
     if args.name=='':
-        filename = args.model + '_seed_' + str(args.seed) + '_samples_' + str(args.nb_samples)
+        filename = args.model + '_' + str(args.search_type) + '_samples_' + str(args.nb_samples) + '_seed_' + str(args.seed)
     else :
-        filename = args.model + '_seed_' + str(args.seed) + '_samples_' + str(args.nb_samples)  + '_' + args.name
+        filename = args.model + '_' + str(args.search_type) + '_samples_' + str(args.nb_samples) + '_seed_' + str(args.seed) + '_' + args.name
 
     if args.model=='autoencoder':
         hypermodel = AEHyperModel(input_shape=INPUT_SHAPE)
     
-    tuner = RandomSearch(
-        hypermodel,
-        objective='val_loss',
-        seed=args.seed,
-        max_trials=args.max_trials,
-        executions_per_trial=args.exec_per_trial,
-        directory='random_search',
-        project_name=filename
-    )
+
+    if args.search_type=='random':
+        tuner = RandomSearch(
+            hypermodel,
+            objective='val_loss',
+            seed=args.seed,
+            max_trials=args.max_trials,
+            executions_per_trial=args.exec_per_trial,
+            directory='random_search',
+            project_name=filename
+        )
 
     cb = tf.keras.callbacks.EarlyStopping(
         monitor='val_loss', min_delta=1e-3, patience=4, verbose=0,
