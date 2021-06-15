@@ -5,7 +5,7 @@ from model import *
 from params import INPUT_SHAPE, OPTIMIZER, BETA
 
 def training(x_train, y_train ,model, nb_epoch, training_batch_size,file):
-    cb = tf.keras.callbacks.EarlyStopping(
+    cb = keras.callbacks.EarlyStopping(
         monitor='val_loss', min_delta=0, patience=4, verbose=0,
         mode='auto', baseline=None, restore_best_weights=True
     )
