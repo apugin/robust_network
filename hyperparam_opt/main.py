@@ -70,10 +70,9 @@ def main():
         print("Le meilleur modèle atteint sur la base de test une loss de :" + str(loss))
 
     if args.search_type=='grid':
-        seed = 1
-        np.random.seed(seed)
+        np.random.seed(args.seed)
 
-        batch_size = [128, 256]
+        batch_size = [128]
         epochs = [50]
         nb_filters1 = [32, 64, 96]
         nb_filters2 = [16, 32, 64, 96]
