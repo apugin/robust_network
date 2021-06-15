@@ -3,8 +3,8 @@ import numpy as np
 import keras
 from keras.models import Sequential, Model
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
-from keras.layers import Input, LeakyReLU, Conv2DTranspose, Reshape
-from params import INPUT_SHAPE, DIM_LATENT, ALPHA, NB_CLASSES, OPTIMIZER, BETA
+from keras.layers import Input, ReLU, Conv2DTranspose, Reshape
+from params import INPUT_SHAPE, DIM_LATENT, NB_CLASSES, OPTIMIZER, BETA, FILTER_SIZE, NB_FILTER1, NB_FILTER2
 
 
 def load_model(file_path,model):
@@ -26,11 +26,11 @@ def create_encoder():
     '''Create the model for the encoder'''
     input = Input(shape=INPUT_SHAPE)
 
-    encoder2 = Conv2D(64, kernel_size=(3,3), strides=(2,2), padding='same') (input)
-    encoder3 = LeakyReLU(alpha=ALPHA) (encoder2)
+    encoder2 = Conv2D(NB_FILTER1, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (input)
+    encoder3 = ReLU(max_value=None, negative_slope=0, threshold=0) (encoder2)
 
-    encoder4 = Conv2D(32, kernel_size=(3,3), strides=(2,2), padding='same') (encoder3)
-    encoder5 = LeakyReLU(alpha=ALPHA) (encoder4)
+    encoder4 = Conv2D(NB_FILTER2, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (encoder3)
+    encoder5 = ReLU(max_value=None, negative_slope=0, threshold=0)
 
     encoder6 = Flatten() (encoder5)
     encoder7 = Dense(DIM_LATENT) (encoder6)
@@ -49,13 +49,13 @@ def create_decoder():
     decoder2 = Dense(np.prod(volume_size[1:])) (decoder1)
     decoder3 = Reshape((volume_size[1], volume_size[2], volume_size[3])) (decoder2)
 
-    decoder4 = Conv2DTranspose(64, kernel_size=(3,3), strides=(2,2), padding='same') (decoder3)
-    decoder5 = LeakyReLU(alpha=ALPHA) (decoder4)
+    decoder4 = Conv2DTranspose(NB_FILTER2, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (decoder3)
+    decoder5 = ReLU(max_value=None, negative_slope=0, threshold=0) (decoder4)
 
-    decoder6 = Conv2DTranspose(32, kernel_size=(3,3), strides=(2,2), padding='same') (decoder5)
-    decoder7 = LeakyReLU(alpha=ALPHA) (decoder6)
+    decoder6 = Conv2DTranspose(NB_FILTER1, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (decoder5)
+    decoder7 = ReLU(max_value=None, negative_slope=0, threshold=0) (decoder6)
 
-    decoder8 = Conv2DTranspose(INPUT_SHAPE[2], kernel_size=(3,3), padding='same', activation='sigmoid',name='decoder_output') (decoder7)
+    decoder8 = Conv2DTranspose(INPUT_SHAPE[2], kernel_size=(FILTER_SIZE,FILTER_SIZE), padding='same', activation='sigmoid',name='decoder_output') (decoder7)
 
     decoder = Model(decoder1, decoder8, name='decoder')
 

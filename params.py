@@ -8,12 +8,13 @@ INPUT_SHAPE = (IMG_ROWS, IMG_COLS, 1)
 
 
 # Training parameters
-TAUX_APPRENTISAGE = 0.01
-OPTIMIZER = 'adam'
+TAUX_APPRENTISAGE = 1e-3
+OPTIMIZER = Adam(learning_rate)
 BETA = 1 # Parameter for loss function: Crossentropy(labels) + BETA*MSE(images)
 
 
 # Model parameters
-ALPHA = 0.2 # Parameter for LeakyReLu
-DIM_LATENT = 10 # Dimension of the latent space
-
+NB_FILTER1 = 64
+NB_FILTER2 = 96
+FILTER_SIZE = 5
+DIM_LATENT = 16 # Dimension of the latent space
