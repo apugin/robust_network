@@ -9,7 +9,7 @@ INPUT_SHAPE = (IMG_ROWS, IMG_COLS, 1)
 
 # Training parameters
 TAUX_APPRENTISAGE = 1e-3
-OPTIMIZER = Adam(learning_rate)
+OPTIMIZER = Adam(TAUX_APPRENTISAGE)
 BETA = 1 # Parameter for loss function: Crossentropy(labels) + BETA*MSE(images)
 
 
