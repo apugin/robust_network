@@ -42,7 +42,7 @@ def create_encoder():
 
 def create_decoder():
     '''Create the model for the decoder'''
-    volume_size = (None, 7, 7, 64)
+    volume_size = (None, 7, 7, NB_FILTER2)
 
     decoder1 = Input(shape=(DIM_LATENT,))
 
