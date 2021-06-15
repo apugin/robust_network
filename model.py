@@ -30,7 +30,7 @@ def create_encoder():
     encoder3 = ReLU(max_value=None, negative_slope=0, threshold=0) (encoder2)
 
     encoder4 = Conv2D(NB_FILTER2, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (encoder3)
-    encoder5 = ReLU(max_value=None, negative_slope=0, threshold=0)
+    encoder5 = ReLU(max_value=None, negative_slope=0, threshold=0) (encoder4)
 
     encoder6 = Flatten() (encoder5)
     encoder7 = Dense(DIM_LATENT) (encoder6)
