@@ -16,7 +16,7 @@ def testing(x_test,y_test,model,file):
         autoencoder = assemble_autoencoder(encoder, decoder)
 
         score = autoencoder.evaluate(x_test, x_test, verbose=0)
-        print("Accuracy de l'autoencodeur:"+str(score[1]))
+        print("Accuracy de l'autoencodeur:"+str(score))
 
 
     elif model == 'classifier':
