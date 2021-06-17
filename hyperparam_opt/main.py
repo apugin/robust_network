@@ -21,7 +21,7 @@ parser.add_argument('--name', dest='name', default='', help="Choose the name of 
 
 parser.add_argument('--search_type', dest='search_type', default='grid', help="Choose search type : 'random' or 'grid'(for autoencoder only)")
 parser.add_argument('--max_trials', dest='max_trials', type=int, default=50, help="Choose the number of random trials")
-parser.add_argument('--exec_per_trial', dest='exec_per_trial', type=int, default=1, help="Choose the number of executions per trial")
+parser.add_argument('--exec_per_trial', dest='exec_per_trial', type=int, default=2, help="Choose the number of executions per trial")
 parser.add_argument('--seed', dest='seed', type=int, default=1, help="Choose the seed for random events")
 
 args = parser.parse_args()
