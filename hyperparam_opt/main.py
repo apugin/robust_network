@@ -73,7 +73,7 @@ def main():
         if args.search_type=='grid':
             np.random.seed(args.seed)
 
-            autoencoder =sklearn_autoencoder
+            autoencoder =sklearn_autoencoder()
 
             batch_size = [args.batch_size]
             epochs = [args.epoch]
