@@ -3,7 +3,7 @@ from data import get_data
 import keras
 import tensorflow as tf
 from kerastuner.tuners import RandomSearch
-from model import AEHyperModel, sklearn_autoencoder, sklearn_classifier
+from model import AEHyperModel, sklearn_autoencoder, sklearn_classifier, load_fusion
 from sklearn.model_selection import KFold, GridSearchCV
 import numpy as np
 
