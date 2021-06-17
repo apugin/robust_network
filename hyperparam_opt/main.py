@@ -5,6 +5,7 @@ import tensorflow as tf
 from kerastuner.tuners import RandomSearch
 from model import AEHyperModel, sklearn_autoencoder, sklearn_classifier
 from sklearn.model_selection import KFold
+import numpy as np
 
 import warnings
 warnings.simplefilter("ignore")
