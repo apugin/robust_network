@@ -109,8 +109,8 @@ def assemble_fusion(encoder, decoder, classifier_end):
                   'decoder': 'mse', 
                   'classifier_end': 'categorical_crossentropy'},
               loss_weights={
-                  'decoder': BETA, 
-                  'classifier_end': 1.},
+                  'decoder': 1., 
+                  'classifier_end': BETA},
               metrics={ 
                   'classifier_end': 'accuracy'})
         
