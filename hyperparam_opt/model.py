@@ -106,8 +106,42 @@ def create_autoencoder(nb_filters1, nb_filters2, filter_size, dim_latent):
     
   return autoencoder
 
-def sk_autoencoder():
+def sklearn_autoencoder():
     
     autoencoder = KerasRegressor(build_fn=create_autoencoder, verbose=0)
+
+    return autoencoder
+
+
+def create_classifier(nb_filters1, nb_filters2, filter_size, dim_latent, nb_layers, nb_neurons):
+  classifier = keras.Sequential()
+
+  activation = ReLU(max_value=None, negative_slope=0, threshold=0)
+
+  classifier.add(Conv2D(nb_filters1, kernel_size=filter_size, strides=(2,2), padding='same', input_shape=input_shape))
+  classifier.add(activation)
+
+  classifier.add(Conv2D(nb_filters2, kernel_size=filter_size, strides=(2,2), padding='same'))
+  classifier.add(activation)
+
+  classifier.add(Flatten())
+  classifier.add(Dense(dim_latent))
+
+  for i in range(nb_layers):
+      classifier.add(Dense(nb_neurons))
+      classifier.add(activation)
+
+  learning_rate = 1e-3
+
+  classifier.add(Dense(10, activation='softmax', name='classifier_output'))
+
+  classifier.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate), metrics=['accuracy'])
+    
+  return classifier
+
+
+def sklearn_classifier():
+    
+    classifier = KerasClassifier(build_fn=create_classifier, verbose=0)
 
     return autoencoder

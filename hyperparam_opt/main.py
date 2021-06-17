@@ -2,7 +2,7 @@ import argparse
 from data import get_data
 import tensorflow as tf
 from kerastuner.tuners import RandomSearch
-from model import AEHyperModel
+from model import AEHyperModel, sklearn_autoencoder, sklearn_classifier
 
 import warnings
 warnings.simplefilter("ignore")
@@ -35,59 +35,74 @@ def main():
         filename = args.model + '_' + str(args.search_type) + '_samples_' + str(args.nb_samples) + '_seed_' + str(args.seed) + '_' + args.name
 
     if args.model=='autoencoder':
-        hypermodel = AEHyperModel()
-    
+        if args.search_type=='random':
+            hypermodel = AEHyperModel()
+            tuner = RandomSearch(
+                hypermodel,
+                objective='val_loss',
+                seed=args.seed,
+                max_trials=args.max_trials,
+                executions_per_trial=args.exec_per_trial,
+                directory='random_search',
+                project_name=filename
+            )
 
-    if args.search_type=='random':
-        tuner = RandomSearch(
-            hypermodel,
-            objective='val_loss',
-            seed=args.seed,
-            max_trials=args.max_trials,
-            executions_per_trial=args.exec_per_trial,
-            directory='random_search',
-            project_name=filename
-        )
+            cb = tf.keras.callbacks.EarlyStopping(
+                monitor='val_loss', min_delta=1e-3, patience=4, verbose=0,
+                mode='auto', baseline=None, restore_best_weights=True
+            )
 
-        cb = tf.keras.callbacks.EarlyStopping(
-        monitor='val_loss', min_delta=1e-3, patience=4, verbose=0,
-        mode='auto', baseline=None, restore_best_weights=True
-        )
+            tuner.search(x_train, x_train, 
+                epochs=args.epoch, 
+                batch_size=args.batch_size, 
+                callbacks=[cb], 
+                validation_split=0.1
+            )
 
-        tuner.search(x_train, x_train, 
-            epochs=args.epoch, 
-            batch_size=args.batch_size, 
-            callbacks=[cb], 
-            validation_split=0.1
-        )
+            tuner.results_summary()
 
-        tuner.results_summary()
+            best_model = tuner.get_best_models(num_models=1)[0]
 
-        best_model = tuner.get_best_models(num_models=1)[0]
+            loss = best_model.evaluate(x_test, x_test)
+            print()
+            print("Le meilleur modèle atteint sur la base de test une loss de :" + str(loss))
 
-        loss = best_model.evaluate(x_test, x_test)
-        print()
-        print("Le meilleur modèle atteint sur la base de test une loss de :" + str(loss))
+        if args.search_type=='grid':
+            np.random.seed(args.seed)
 
-    if args.search_type=='grid':
+            autoencoder =sklearn_autoencoder
+
+            batch_size = [128]
+            epochs = [50]
+            nb_filters1 = [32, 64, 96]
+            nb_filters2 = [16, 32, 64, 96]
+            filter_size = [3, 4, 5]
+            dim_latent = [10, 13, 16]
+            param_grid = dict(batch_size=batch_size, epochs=epochs, nb_filters1=nb_filters1, nb_filters2=nb_filters2, dim_latent=dim_latent, filter_size=filter_size)
+            grid = GridSearchCV(estimator=autoencoder, param_grid=param_grid, n_jobs=1, verbose=3, cv=3)
+            grid_result = grid.fit(x_train, x_train)
+
+            print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+
+    elif args.model=='classifier':
         np.random.seed(args.seed)
+
+        classifier = KerasClassifier(build_fn=create_classifier, verbose=0)
 
         batch_size = [128]
         epochs = [50]
-        nb_filters1 = [32, 64, 96]
-        nb_filters2 = [16, 32, 64, 96]
-        filter_size = [3, 4, 5]
-        dim_latent = [10, 13, 16]
-        param_grid = dict(batch_size=batch_size, epochs=epochs, nb_filters1=nb_filters1, nb_filters2=nb_filters2, dim_latent=dim_latent, filter_size=filter_size)
-        grid = GridSearchCV(estimator=autoencoder, param_grid=param_grid, n_jobs=1, verbose=3, cv=3)
-        grid_result = grid.fit(x_train, x_train)
+        nb_filters1 = [64]
+        nb_filters2 = [96]
+        filter_size = [5]
+        dim_latent = [16]
+        nb_neurons = [16,14,12]
+        nb_layers = [0,1,2]
 
-        print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
-        means = grid_result.cv_results_['mean_test_score']
-        stds = grid_result.cv_results_['std_test_score']
-        params = grid_result.cv_results_['params']
-        for mean, stdev, param in zip(means, stds, params):
-            print("%f (%f) with: %r" % (mean, stdev, param))
+        param_grid = dict(batch_size=batch_size, epochs=epochs, nb_filters1=nb_filters1, nb_filters2=nb_filters2, dim_latent=dim_latent, filter_size=filter_size, nb_layers=nb_layers, nb_neurons=nb_neurons)
+        grid = GridSearchCV(estimator=classifier, param_grid=param_grid, n_jobs=1, verbose=3, cv=3)
+
+
+        grid_result = grid.fit(x_train, y_train)
 
 if __name__ == '__main__':
     main()
