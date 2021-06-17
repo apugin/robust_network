@@ -135,7 +135,7 @@ def create_classifier(nb_filters1, nb_filters2, filter_size, dim_latent, nb_laye
 
   classifier.add(Dense(NB_CLASSES, activation='softmax', name='classifier_output'))
 
-  classifier.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate), metrics=['accuracy'])
+  classifier.compile(loss='categorical_crossentropy', optimizer=keras.optimizers.Adam(learning_rate), metrics=['accuracy'])
     
   return classifier
 
@@ -154,8 +154,10 @@ def load_fusion(beta):
 
     input_fusion = Input(shape=INPUT_SHAPE)
 
+    learning_rate = 1e-3
+
     fusion = Model(input_fusion, [ decoder(encoder(input_fusion)), classifier_end(encoder(input_fusion)) ], name='fusion')
-    fusion.compile(optimizer='adam', 
+    fusion.compile(optimizer=keras.optimizers.Adam(learning_rate), 
             loss={
                 'decoder': 'mse', 
                 'classifier_end': 'categorical_crossentropy'},
