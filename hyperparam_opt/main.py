@@ -90,7 +90,7 @@ def main():
     elif args.model=='classifier':
         np.random.seed(args.seed)
 
-        classifier = KerasClassifier(build_fn=create_classifier, verbose=0)
+        classifier = sklearn_classifier()
 
         batch_size = [args.batch_size]
         epochs = [args.epoch]
