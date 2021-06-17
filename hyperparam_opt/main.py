@@ -120,6 +120,7 @@ def main():
             decoder_loss_beta=0
             classifier_loss_beta=0
             for train, val in kfold.split(x_train, y_train):
+                keras.backend.clear_session()
                 fusion = load_fusion(beta)
 
                 cb = keras.callbacks.EarlyStopping(
