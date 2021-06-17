@@ -6,7 +6,7 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from tensorflow.keras.layers import Input, LeakyReLU, Conv2DTranspose, Reshape, ReLU
 from kerastuner import HyperModel
-from params import NB_CLASSES, BETA, INPUT_SHAPE
+from params import NB_CLASSES, INPUT_SHAPE
 
 
 class AEHyperModel(HyperModel):
@@ -118,7 +118,7 @@ def create_classifier(nb_filters1, nb_filters2, filter_size, dim_latent, nb_laye
 
   activation = ReLU(max_value=None, negative_slope=0, threshold=0)
 
-  classifier.add(Conv2D(nb_filters1, kernel_size=filter_size, strides=(2,2), padding='same', input_shape=input_shape))
+  classifier.add(Conv2D(nb_filters1, kernel_size=filter_size, strides=(2,2), padding='same', input_shape=INPUT_SHAPE))
   classifier.add(activation)
 
   classifier.add(Conv2D(nb_filters2, kernel_size=filter_size, strides=(2,2), padding='same'))
@@ -133,7 +133,7 @@ def create_classifier(nb_filters1, nb_filters2, filter_size, dim_latent, nb_laye
 
   learning_rate = 1e-3
 
-  classifier.add(Dense(10, activation='softmax', name='classifier_output'))
+  classifier.add(Dense(NB_CLASSES, activation='softmax', name='classifier_output'))
 
   classifier.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate), metrics=['accuracy'])
     
@@ -144,4 +144,24 @@ def sklearn_classifier():
     
     classifier = KerasClassifier(build_fn=create_classifier, verbose=0)
 
-    return autoencoder
+    return classifier
+
+
+def load_fusion(beta):
+    encoder = keras.models.load_model("saved_models/encoder_1.0.h5")
+    decoder = keras.models.load_model("saved_models/decoder_1.0.h5")
+    classifier_end = keras.models.load_model("saved_models/classifier_end_1.0.h5")
+
+    input_fusion = Input(shape=INPUT_SHAPE)
+
+    fusion = Model(input_fusion, [ decoder(encoder(input_fusion)), classifier_end(encoder(input_fusion)) ], name='fusion')
+    fusion.compile(optimizer='adam', 
+            loss={
+                'decoder': 'mse', 
+                'classifier_end': 'categorical_crossentropy'},
+            loss_weights={
+                'decoder': 1., 
+                'classifier_end': beta},
+            metrics={'classifier_end': 'accuracy'})
+    
+    return fusion
