@@ -18,7 +18,7 @@ parser.add_argument('--batch_size', dest='batch_size', type=int, default=128, he
 parser.add_argument('--nb_samples', dest='nb_samples', type=int, default=5000, help="Choose the size of the training dataset")
 parser.add_argument('--name', dest='name', default='', help="Choose the name of your search")
 
-parser.add_argument('--search_type', dest='search_type', default='random', help="Choose search type : 'random' or 'grid'(for autoencoder only)")
+parser.add_argument('--search_type', dest='search_type', default='grid', help="Choose search type : 'random' or 'grid'(for autoencoder only)")
 parser.add_argument('--max_trials', dest='max_trials', type=int, default=50, help="Choose the number of random trials")
 parser.add_argument('--exec_per_trial', dest='exec_per_trial', type=int, default=1, help="Choose the number of executions per trial")
 parser.add_argument('--seed', dest='seed', type=int, default=1, help="Choose the seed for random events")
