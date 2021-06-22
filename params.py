@@ -17,4 +17,4 @@ BETA = 10**(-0.84375) # Parameter for loss function: BETA*Crossentropy(labels) +
 NB_FILTER1 = 64
 NB_FILTER2 = 96
 FILTER_SIZE = 5
-DIM_LATENT = 16 # Dimension of the latent space
+DIM_LATENT = (4,4,8) # Dimension of the latent space

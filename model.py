@@ -26,38 +26,31 @@ def create_encoder():
     '''Create the model for the encoder'''
     input = Input(shape=INPUT_SHAPE)
 
-    encoder2 = Conv2D(NB_FILTER1, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (input)
-    encoder3 = ReLU(max_value=None, negative_slope=0, threshold=0) (encoder2)
+    x = layers.Conv2D(16, (3, 3), activation='relu', padding='same')(input)
+    x = layers.MaxPooling2D((2, 2), padding='same')(x)
+    x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(x)
+    x = layers.MaxPooling2D((2, 2), padding='same')(x)
+    x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(x)
+    encoded = layers.MaxPooling2D((2, 2), padding='same')(x)
 
-    encoder4 = Conv2D(NB_FILTER2, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (encoder3)
-    encoder5 = ReLU(max_value=None, negative_slope=0, threshold=0) (encoder4)
-
-    encoder6 = Flatten() (encoder5)
-    encoder7 = Dense(DIM_LATENT) (encoder6)
-
-    encoder = Model(input, encoder7, name='encoder')
+    encoder = Model(input, encoded, name='encoder')
 
     return encoder
 
 
 def create_decoder():
     '''Create the model for the decoder'''
-    volume_size = (None, 7, 7, NB_FILTER2)
+    input = Input(shape=DIM_LATENT)
 
-    decoder1 = Input(shape=(DIM_LATENT,))
+    x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(encoded)
+    x = layers.UpSampling2D((2, 2))(x)
+    x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(x)
+    x = layers.UpSampling2D((2, 2))(x)
+    x = layers.Conv2D(16, (3, 3), activation='relu')(x)
+    x = layers.UpSampling2D((2, 2))(x)
+    decoded = layers.Conv2D(1, (3, 3), activation='sigmoid', padding='same')(x)
 
-    decoder2 = Dense(np.prod(volume_size[1:])) (decoder1)
-    decoder3 = Reshape((volume_size[1], volume_size[2], volume_size[3])) (decoder2)
-
-    decoder4 = Conv2DTranspose(NB_FILTER2, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (decoder3)
-    decoder5 = ReLU(max_value=None, negative_slope=0, threshold=0) (decoder4)
-
-    decoder6 = Conv2DTranspose(NB_FILTER1, kernel_size=(FILTER_SIZE,FILTER_SIZE), strides=(2,2), padding='same') (decoder5)
-    decoder7 = ReLU(max_value=None, negative_slope=0, threshold=0) (decoder6)
-
-    decoder8 = Conv2DTranspose(INPUT_SHAPE[2], kernel_size=(FILTER_SIZE,FILTER_SIZE), padding='same', activation='sigmoid',name='decoder_output') (decoder7)
-
-    decoder = Model(decoder1, decoder8, name='decoder')
+    decoder = Model(decoder1, decoded, name='decoder')
 
     return decoder
 
@@ -77,7 +70,8 @@ def create_classifier_end():
     '''Create classifier in two parts; the first part has the same architecture as the encoder'''
     continuation_classifier = Input(shape=(DIM_LATENT,))
 
-    end_classif2 = Dense(14) (continuation_classifier)
+    end_classif1 = Flatten() (continuation_classifier)
+    end_classif2 = Dense(14) (end_classif1)
     end_classif3 = ReLU(max_value=None, negative_slope=0, threshold=0) (end_classif2)
 
     end_classif4 = Dense(NB_CLASSES, activation='softmax', name='classifier_output') (end_classif3)
