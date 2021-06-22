@@ -51,7 +51,7 @@ def create_decoder():
     x = layers.UpSampling2D((2, 2))(x)
     decoded = layers.Conv2D(1, (3, 3), activation='sigmoid', padding='same')(x)
 
-    decoder = Model(decoder1, decoded, name='decoder')
+    decoder = Model(input, decoded, name='decoder')
 
     return decoder
 
