@@ -62,7 +62,7 @@ def assemble_autoencoder(encoder, decoder):
 
     autoencoder = Model(input, decoder(encoder(input)), name='autoencoder')
 
-    autoencoder.compile(loss="mse", optimizer=OPTIMIZER)
+    autoencoder.compile(loss="binary_crossentropy", optimizer=OPTIMIZER)
 
     return autoencoder
 
