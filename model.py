@@ -43,7 +43,7 @@ def create_decoder():
     '''Create the model for the decoder'''
     input = Input(shape=DIM_LATENT)
 
-    x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(encoded)
+    x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(input)
     x = layers.UpSampling2D((2, 2))(x)
     x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(x)
     x = layers.UpSampling2D((2, 2))(x)
