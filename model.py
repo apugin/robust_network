@@ -5,7 +5,7 @@ from keras import layers
 from keras.models import Sequential, Model
 from keras.layers import Dense, Flatten, Dropout, Conv2D, MaxPooling2D
 from keras.layers import Input, ReLU, Conv2DTranspose, Reshape
-from params import INPUT_SHAPE, DIM_LATENT, NB_CLASSES, OPTIMIZER, BETA, FILTER_SIZE, NB_FILTER1, NB_FILTER2
+from params import INPUT_SHAPE, DIM_LATENT, NB_CLASSES, OPTIMIZER, BETA, NB_FILTER1, NB_FILTER2
 
 
 def load_model(file_path,model):
@@ -27,9 +27,9 @@ def create_encoder():
     '''Create the model for the encoder'''
     input = Input(shape=INPUT_SHAPE)
 
-    x = layers.Conv2D(128, (3, 3), activation='relu', padding='same')(input)
+    x = layers.Conv2D(NB_FILTER1, (3, 3), activation='relu', padding='same')(input)
     x = layers.MaxPooling2D((2, 2), padding='same')(x)
-    x = layers.Conv2D(64, (3, 3), activation='relu', padding='same')(x)
+    x = layers.Conv2D(NB_FILTER2, (3, 3), activation='relu', padding='same')(x)
     x = layers.MaxPooling2D((2, 2), padding='same')(x)
     x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(x)
     encoded = layers.MaxPooling2D((2, 2), padding='same')(x)
@@ -45,9 +45,9 @@ def create_decoder():
 
     x = layers.Conv2D(8, (3, 3), activation='relu', padding='same')(input)
     x = layers.UpSampling2D((2, 2))(x)
-    x = layers.Conv2D(64, (3, 3), activation='relu', padding='same')(x)
+    x = layers.Conv2D(NB_FILTER2, (3, 3), activation='relu', padding='same')(x)
     x = layers.UpSampling2D((2, 2))(x)
-    x = layers.Conv2D(128, (3, 3), activation='relu')(x)
+    x = layers.Conv2D(NB_FILTER1, (3, 3), activation='relu')(x)
     x = layers.UpSampling2D((2, 2))(x)
     decoded = layers.Conv2D(1, (3, 3), activation='sigmoid', padding='same')(x)
 
