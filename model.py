@@ -71,9 +71,9 @@ def create_classifier():
     '''Create classifier in two parts; the first part has the same architecture as the encoder'''
     continuation_classifier = Input(shape=(DIM_LATENT,))
 
-    classif2 = Dense(64, activation='relu') (continuation_classifier)
+    classif2 = Dense(96, activation='relu') (continuation_classifier)
     classif3 = Dense(32, activation='relu') (classif2)
-    classif4 = Dense(16, activation='relu') (classif3)
+    classif4 = Dense(32, activation='relu') (classif3)
     classif5 = Dense(NB_CLASSES, activation='softmax', name='classifier_output') (classif4)
 
     classifier = Model(continuation_classifier, classif5, name='classifier_end')
