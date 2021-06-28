@@ -14,8 +14,8 @@ def load_model(file_path,model):
             return create_encoder()
         elif model == 'decoder':
             return create_decoder()
-        elif model == 'classifier_end':
-            return create_classifier_end()
+        elif model == 'classifier':
+            return create_classifier()
         else :
             print("/!\ Unknown model /!\ ")
             exit(0)
@@ -67,30 +67,30 @@ def assemble_autoencoder(encoder, decoder):
     return autoencoder
 
 
-def create_classifier_end():
+def create_classifier():
     '''Create classifier in two parts; the first part has the same architecture as the encoder'''
     continuation_classifier = Input(shape=(DIM_LATENT,))
 
-    end_classif1 = Flatten() (continuation_classifier)
-    end_classif2 = Dense(14) (end_classif1)
-    end_classif3 = ReLU(max_value=None, negative_slope=0, threshold=0) (end_classif2)
+    classif2 = Dense(64, activation='relu') (continuation_classifier)
+    classif3 = Dense(32, activation='relu') (classif2)
+    classif4 = Dense(16, activation='relu') (classif3)
+    classif5 = Dense(NB_CLASSES, activation='softmax', name='classifier_output') (classif4)
 
-    end_classif4 = Dense(NB_CLASSES, activation='softmax', name='classifier_output') (end_classif3)
-
-    classifier_end = Model(continuation_classifier, end_classif4, name='classifier_end')
-
-    return classifier_end
-
-
-def assemble_classifier(classifier_beginning, classifier_end):
-    '''Put the two parts of the classifier together to create the classifier'''
-    input = Input(shape=INPUT_SHAPE)
-
-    classifier = Model(input, classifier_end(classifier_beginning(input)), name='classifier')
-
+    classifier = Model(continuation_classifier, classif5, name='classifier_end')
     classifier.compile(loss='categorical_crossentropy', optimizer=OPTIMIZER, metrics=['accuracy'])
 
     return classifier
+
+
+#def assemble_classifier(classifier_beginning, classifier_end):
+    #'''Put the two parts of the classifier together to create the classifier'''
+    #input = Input(shape=INPUT_SHAPE)
+
+    #classifier = Model(input, classifier_end(classifier_beginning(input)), name='classifier')
+
+    #classifier.compile(loss='categorical_crossentropy', optimizer=OPTIMIZER, metrics=['accuracy'])
+
+    #return classifier
 
 
 def assemble_fusion(encoder, decoder, classifier_end):

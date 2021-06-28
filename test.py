@@ -1,6 +1,7 @@
 import keras
 from keras.layers import Input
 from keras.models import Model
+from data import get_h_data
 from model import *
 from params import OPTIMIZER, INPUT_SHAPE, BETA
 
@@ -20,15 +21,13 @@ def testing(x_test,y_test,model,file):
 
 
     elif model == 'classifier':
-        classifier_beginning_path = "saved_models/classifier_beginning" + file + ".h5"
-        classifier_end_path = "saved_models/classifier_end" + file + ".h5"
+        classifier_path = "saved_models/classifier_end" + file + ".h5"
 
-        classifier_beginning = load_model(classifier_beginning_path, "encoder")
-        classifier_end = load_model(classifier_end_path, "classifier_end")
+        classifier = load_model(classifier_path, "classifier")
 
-        classifier = assemble_classifier(classifier_beginning, classifier_end)
+        h_test = get_h_data(x_test)
 
-        score = classifier.evaluate(x_test, y_test, verbose=0)
+        score = classifier.evaluate(h_test, y_test, verbose=0)
         print("Accuracy du classifieur:"+str(score[1]))
 
 
