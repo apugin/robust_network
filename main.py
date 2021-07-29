@@ -17,7 +17,7 @@ parser.add_argument('--batch_size', dest='batch_size', type=int, default=128, he
 parser.add_argument('--nb_samples', dest='nb_samples', type=int, default=5000, help="For training: Choose the size of the training dataset")
 parser.add_argument('--name', dest='name', default='new', help="For training: Choose the name of the model")
 
-parser.add_argument('--epsilons', dest='epsilons', default=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5], 
+parser.add_argument('--epsilons', dest='epsilons', type=list, default=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5], 
     help="For testing: Choose list of epsilon to test robustness")
 
 args = parser.parse_args()
