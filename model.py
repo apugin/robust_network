@@ -60,7 +60,7 @@ def create_encoder(procedure):
 
 def create_decoder():
     '''Create the model for the decoder'''
-    input = Input(shape=(DIM_LATENT,))
+    input = Input(shape=(4,4,NB_FILTER3))
 
     x = layers.Conv2D(NB_FILTER3, (3, 3), activation='relu', padding='same', kernel_regularizer=l2(0.001))(input)
     # x = keras.layers.Dropout(0.2) (x)
