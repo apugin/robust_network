@@ -5,7 +5,7 @@ from keras.layers import Flatten, Input
 from keras.models import Model
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
-from params import IMG_ROWS, IMG_COLS, NB_CLASSES, INPUT_SHAPE, NB_CL, DIM_LATENT
+from params import *
 
 
 def get_data(nb_training_samples):
@@ -18,19 +18,26 @@ def get_data(nb_training_samples):
     x_train = x_train.reshape(x_train.shape[0], IMG_ROWS, IMG_COLS, 1)
     x_test = x_test.reshape(x_test.shape[0], IMG_ROWS, IMG_COLS, 1)
 
-    l_idx = [i for i in range(nb_samples)]
+    # Number of images in validation data base
+    nb_val = int(nb_training_samples*VAL_SPLIT)
+
+    l_idx = [i for i in range(len(x_train))]
     np.random.shuffle(l_idx)
-    l_idx = l_idx[:nb_training_samples]
+    id_val = l_idx[:nb_val]
+    l_idx = l_idx[nb_val:nb_training_samples]
+
+    x_val, y_val = x_train[id_val], y_train[id_val]
     x_train, y_train = x_train[l_idx], y_train[l_idx]
 
-    y_train = np_utils.to_categorical(y_train, NB_CLASSES)
-    y_test = np_utils.to_categorical(y_test, NB_CLASSES)
+    # One hot encoding
+    y_train = np_utils.to_categorical(y_train, nb_classes)
+    y_val = np_utils.to_categorical(y_val, nb_classes)
+    y_test = np_utils.to_categorical(y_test, nb_classes)
 
-    return (x_train, y_train), (x_test, y_test)
+    return (x_train, y_train), (x_val, y_val), (x_test, y_test)
 
 
-def get_h_data(x_data):
-    encoder = keras.models.load_model("saved_models/encoder_2.0.h5")
+def get_h_data(x_train, x_val, encoder):
 
     input = Input(shape=(4,4,8))
     x = Flatten() (input)
@@ -38,8 +45,10 @@ def get_h_data(x_data):
 
     enc_input = Input(shape=INPUT_SHAPE)
     flat_encoder = Model(enc_input, flattener(encoder(enc_input)))
-    h_data = flat_encoder.predict(x_data)
-    return h_data
+
+    h_train = flat_encoder.predict(x_train)
+    h_val = flat_encoder.predict(x_val)
+    return h_train, h_val
 
 
 def k_neighbors_graph(data_set, k):
