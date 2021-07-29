@@ -11,7 +11,7 @@ from model import *
 from params import OPTIMIZER, INPUT_SHAPE
 
 
-def testing(x_test,y_test,model,epsilons):
+def testing(x_test,y_test,epsilons):
     #Looking up the name of the models saved
     relevant_path = "saved_models"
     file_names = [fn for fn in os.listdir(relevant_path)
@@ -28,7 +28,6 @@ def testing(x_test,y_test,model,epsilons):
     Y_test = tf.cast(Y_test, tf.int32)
 
     attack = fb.attacks.LinfFastGradientAttack()
-    epsilons = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 
     #We get the accuracy for each model depending of epsilon
     models_accuracy = []
