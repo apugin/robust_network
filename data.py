@@ -30,16 +30,16 @@ def get_data(nb_training_samples):
     x_train, y_train = x_train[l_idx], y_train[l_idx]
 
     # One hot encoding
-    y_train = np_utils.to_categorical(y_train, nb_classes)
-    y_val = np_utils.to_categorical(y_val, nb_classes)
-    y_test = np_utils.to_categorical(y_test, nb_classes)
+    y_train = np_utils.to_categorical(y_train, NB_CLASSES)
+    y_val = np_utils.to_categorical(y_val, NB_CLASSES)
+    y_test = np_utils.to_categorical(y_test, NB_CLASSES)
 
     return (x_train, y_train), (x_val, y_val), (x_test, y_test)
 
 
 def get_h_data(x_train, x_val, encoder):
 
-    input = Input(shape=(4,4,8))
+    input = Input(shape=(4,4,NB_FILTER3))
     x = Flatten() (input)
     flattener = Model(input, x)
 
