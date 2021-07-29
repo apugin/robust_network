@@ -42,7 +42,7 @@ def training(x_train, y_train, x_val, y_val , procedure, nb_epoch, training_batc
         #Load and train the classifier
         classifier_path = "saved_models/classifier_end" + file + ".h5"
 
-        classifier = load_model(classifier_path, "classifier")
+        classifier = load_model(classifier_path, "classifier", procedure)
 
         #First, we train on non augmented database
         loss = classifier.fit(x=h_train,
