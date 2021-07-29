@@ -2,7 +2,7 @@ import keras
 from keras.layers import Input
 from keras.models import Model
 import tensorflow as tf
-import tensorflow.keras.backend as K
+import tensorflow.keras.backend as backend
 import os
 import foolbox as fb
 import matplotlib.pyplot as plt
@@ -23,8 +23,8 @@ def testing(x_test,y_test,epsilons):
     
     #Foolbox metric
     #We put data in the right format to use foolbox
-    X_test = K.constant(x_test[:1000])
-    Y_test = K.constant(np.argmax(y_test[:1000], axis=-1))
+    X_test = backend.constant(x_test[:1000])
+    Y_test = backend.constant(np.argmax(y_test[:1000], axis=-1))
     Y_test = tf.cast(Y_test, tf.int32)
 
     attack = fb.attacks.LinfFastGradientAttack()
